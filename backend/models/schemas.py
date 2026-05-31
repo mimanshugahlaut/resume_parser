@@ -37,6 +37,7 @@ class ParsedResume(BaseModel):
     email: Optional[str] = Field(default=None, description="Email address")
     phone: Optional[str] = Field(default=None, description="Phone number")
     linkedin: Optional[str] = Field(default=None, description="LinkedIn profile URL")
+    github: Optional[str] = Field(default=None, description="GitHub profile URL")
     education: list[Education] = Field(default_factory=list)
     experience: list[Experience] = Field(default_factory=list)
     skills: list[str] = Field(default_factory=list)

@@ -15,7 +15,7 @@ from .ai_parser import extract_from_resume
 from .docx_reader import extract_text_from_docx
 from .nlp_parser import extract_name
 from .pdf_reader import extract_text_from_pdf
-from .regex_parser import extract_email, extract_linkedin, extract_phone
+from .regex_parser import extract_email, extract_linkedin, extract_phone, extract_github
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +89,7 @@ async def parse_resume(
     email = extract_email(raw_text)
     phone = extract_phone(raw_text)
     linkedin = extract_linkedin(raw_text)
+    github = extract_github(raw_text)
 
     # -----------------------------------------------------------------------
     # Step 3: spaCy NER (name extraction fallback)
@@ -118,6 +119,7 @@ async def parse_resume(
         email=email,
         phone=phone,
         linkedin=linkedin,
+        github=github,
         education=ai_data.education,
         experience=ai_data.experience,
         skills=ai_data.skills,

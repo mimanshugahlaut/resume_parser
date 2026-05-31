@@ -35,6 +35,12 @@ _LINKEDIN_RE = re.compile(
     re.IGNORECASE,
 )
 
+# GitHub: matches github.com/username patterns (profile URLs)
+_GITHUB_RE = re.compile(
+    r"(?:https?://)?(?:www\.)?github\.com/[A-Za-z0-9_.\-]+/?",
+    re.IGNORECASE,
+)
+
 
 # ---------------------------------------------------------------------------
 # Extraction functions
@@ -74,5 +80,17 @@ def extract_linkedin(text: str) -> Optional[str]:
         if not url.startswith("http"):
             url = "https://" + url
         logger.debug("Extracted LinkedIn: %s", url)
+        return url
+    return None
+
+
+def extract_github(text: str) -> Optional[str]:
+    """Return the first GitHub profile URL found in text, or None."""
+    match = _GITHUB_RE.search(text)
+    if match:
+        url = match.group(0).strip().rstrip("/")
+        if not url.startswith("http"):
+            url = "https://" + url
+        logger.debug("Extracted GitHub: %s", url)
         return url
     return None
