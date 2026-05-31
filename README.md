@@ -74,21 +74,7 @@ npm run dev
 
 ---
 
-## ☁️ Deployment
 
-### Hugging Face Spaces (Recommended)
-This repository is configured to deploy instantly on [Hugging Face Spaces](https://huggingface.co/spaces) using Docker. 
-1. Create a new Space and select **Docker**.
-2. Connect this GitHub repository.
-3. Add `GEMINI_API_KEY` to your Space Secrets.
-4. The space will automatically build and serve both the backend and static frontend from port `7860`.
-
-### Render
-A `render.yaml` blueprint is included for deploying the backend and frontend as separate services on [Render](https://render.com). 
-- Connect your repo, select **New > Blueprint**.
-- Ensure you set `GEMINI_API_KEY` in the backend environment.
-
----
 
 ## 📖 API Endpoints
 
