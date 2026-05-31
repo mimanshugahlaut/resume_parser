@@ -6,7 +6,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Request, status
 
-from models.schemas import ParsedResume
+from ..models.schemas import ParsedResume
 
 logger = logging.getLogger(__name__)
 

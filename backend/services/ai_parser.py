@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from models.schemas import AIExtraction, AIMatchExtraction
+from ..models.schemas import AIExtraction, AIMatchExtraction
 
 load_dotenv()
 

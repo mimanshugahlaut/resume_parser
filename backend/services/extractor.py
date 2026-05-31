@@ -10,12 +10,12 @@ from typing import Optional
 
 import spacy
 
-from models.schemas import ParsedResume
-from services.ai_parser import extract_from_resume
-from services.docx_reader import extract_text_from_docx
-from services.nlp_parser import extract_name
-from services.pdf_reader import extract_text_from_pdf
-from services.regex_parser import extract_email, extract_linkedin, extract_phone
+from ..models.schemas import ParsedResume
+from .ai_parser import extract_from_resume
+from .docx_reader import extract_text_from_docx
+from .nlp_parser import extract_name
+from .pdf_reader import extract_text_from_pdf
+from .regex_parser import extract_email, extract_linkedin, extract_phone
 
 logger = logging.getLogger(__name__)
 

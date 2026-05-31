@@ -6,8 +6,8 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Request, status
 
-from models.schemas import MatchRequest, MatchResult
-from services.ai_parser import score_job_match
+from ..models.schemas import MatchRequest, MatchResult
+from ..services.ai_parser import score_job_match
 
 logger = logging.getLogger(__name__)
 

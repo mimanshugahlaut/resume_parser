@@ -15,7 +15,7 @@ import spacy
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import match, parse, resumes
+from .routers import match, parse, resumes
 
 # ---------------------------------------------------------------------------
 # Logging configuration

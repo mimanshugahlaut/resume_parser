@@ -6,8 +6,8 @@ import logging
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
 
-from models.schemas import ParsedResume
-from services.extractor import parse_resume
+from ..models.schemas import ParsedResume
+from ..services.extractor import parse_resume
 
 logger = logging.getLogger(__name__)
 
