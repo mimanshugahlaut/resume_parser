@@ -6,11 +6,9 @@ Coordinates file reading, regex, spaCy, and Gemini extraction into one pipeline.
 import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Optional
 
-import spacy
-
-from ..models.schemas import ParsedResume
+from ..models.schemas import AIExtraction, Education, Experience, ParsedResume
 from .ai_parser import extract_from_resume
 from .docx_reader import extract_text_from_docx
 from .nlp_parser import extract_name
@@ -35,7 +33,7 @@ def _get_extension(filename: str) -> str:
 async def parse_resume(
     file_bytes: bytes,
     filename: str,
-    nlp_model: Optional[spacy.language.Language],
+    nlp_model: Optional[Any],
 ) -> ParsedResume:
     """
     Full resume parsing pipeline:
@@ -105,7 +103,11 @@ async def parse_resume(
     # -----------------------------------------------------------------------
     # Step 4: Gemini Flash AI extraction (primary extraction engine)
     # -----------------------------------------------------------------------
-    ai_data = await extract_from_resume(raw_text)
+    try:
+        ai_data = await extract_from_resume(raw_text)
+    except (EnvironmentError, RuntimeError) as exc:
+        logger.warning("AI extraction unavailable; using local parser fallback: %s", exc)
+        ai_data = _extract_locally(raw_text)
 
     # -----------------------------------------------------------------------
     # Step 5: Merge results (AI takes priority; spaCy fills name gaps)
@@ -138,3 +140,96 @@ async def parse_resume(
         len(parsed.experience),
     )
     return parsed
+
+
+def _extract_locally(raw_text: str) -> AIExtraction:
+    """Best-effort extraction used when Gemini is not configured or unavailable."""
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+    name = _guess_name(lines)
+
+    return AIExtraction(
+        name=name,
+        skills=_extract_skills(raw_text),
+        summary=_build_summary(lines, name),
+        education=_extract_education_entries(lines),
+        experience=_extract_experience_entries(
+            lines,
+            {"experience", "employment", "work history", "projects", "internship"},
+        ),
+    )
+
+
+def _guess_name(lines: list[str]) -> str:
+    for line in lines[:8]:
+        lower = line.lower()
+        if "@" in line or "linkedin" in lower or "github" in lower:
+            continue
+        words = [word.strip(".,|") for word in line.split()]
+        if 2 <= len(words) <= 5 and all(word[:1].isalpha() for word in words):
+            return " ".join(words)
+    return ""
+
+
+def _extract_skills(raw_text: str) -> list[str]:
+    known_skills = [
+        "python", "java", "javascript", "typescript", "react", "node.js", "node",
+        "express", "fastapi", "django", "flask", "sql", "mysql", "postgresql",
+        "mongodb", "aws", "azure", "gcp", "docker", "kubernetes", "git", "html",
+        "css", "tailwind", "bootstrap", "machine learning", "deep learning",
+        "nlp", "data analysis", "pandas", "numpy", "excel", "power bi", "tableau",
+        "leadership", "communication", "problem solving", "agile", "scrum",
+    ]
+    lower_text = raw_text.lower()
+    found = []
+    for skill in known_skills:
+        if skill in lower_text:
+            label = "Node.js" if skill == "node" else skill
+            found.append(label.upper() if label in {"sql", "aws", "gcp", "nlp"} else label.title())
+    return sorted(set(found))
+
+
+def _build_summary(lines: list[str], name: str) -> str:
+    if not lines:
+        return ""
+    useful_lines = [
+        line for line in lines
+        if line != name and "@" not in line and "linkedin" not in line.lower()
+    ]
+    first_line = useful_lines[0] if useful_lines else lines[0]
+    return first_line[:240]
+
+
+def _extract_education_entries(lines: list[str]) -> list[Education]:
+    entries: list[Education] = []
+    for line in _collect_section_lines(lines, {"education", "academic", "qualification"}):
+        entries.append(Education(degree=line, institution="", year=""))
+    return entries
+
+
+def _extract_experience_entries(lines: list[str], headings: set[str]) -> list[Experience]:
+    entries: list[Experience] = []
+    for line in _collect_section_lines(lines, headings):
+        entries.append(Experience(title=line, company="", duration=""))
+    return entries
+
+
+def _collect_section_lines(lines: list[str], headings: set[str]) -> list[str]:
+    entries: list[str] = []
+    in_section = False
+    stop_headings = {
+        "summary", "profile", "skills", "education", "academic", "qualification",
+        "experience", "employment", "work history", "projects", "internship",
+        "certifications", "achievements",
+    }
+
+    for line in lines:
+        normalized = line.strip().lower().rstrip(":")
+        if normalized in headings:
+            in_section = True
+            continue
+        if in_section and normalized in stop_headings and normalized not in headings:
+            break
+        if in_section and len(entries) < 5:
+            entries.append(line)
+
+    return entries

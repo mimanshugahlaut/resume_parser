@@ -23,13 +23,12 @@ Prerequisites:
 Backend (development):
 
 ```powershell
-cd backend
 python -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r backend\requirements.txt
 python -m spacy download en_core_web_sm  # optional but recommended
 set GEMINI_API_KEY=your_key_here        # or add to backend/.env
-uvicorn main:app --reload --port 8000
+uvicorn backend.main:app --reload --port 8000
 ```
 
 Backend API will be available at `http://localhost:8000` (interactive docs at `/docs`).

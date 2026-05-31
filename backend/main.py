@@ -11,9 +11,13 @@ Run with:
 import logging
 from contextlib import asynccontextmanager
 
-import spacy
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+try:
+    import spacy
+except ImportError:  # spaCy is optional; parsing still works without NER.
+    spacy = None
 
 from .routers import match, parse, resumes
 
@@ -39,19 +43,26 @@ async def lifespan(app: FastAPI):
     logger.info("Starting ResumeIQ backend...")
 
     # Load spaCy model (downloaded via: python -m spacy download en_core_web_sm)
-    try:
-        app.state.nlp_model = spacy.load(
-            "en_core_web_sm",
-            disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"],
-        )
-        logger.info("spaCy model 'en_core_web_sm' loaded successfully.")
-    except OSError:
+    if spacy is None:
         logger.warning(
-            "spaCy model 'en_core_web_sm' not found. "
-            "Run: python -m spacy download en_core_web_sm\n"
-            "Name extraction will fall back to Gemini Flash only."
+            "spaCy is not installed. Install requirements or run: pip install spacy\n"
+            "Name extraction will use local heuristics and Gemini when configured."
         )
         app.state.nlp_model = None
+    else:
+        try:
+            app.state.nlp_model = spacy.load(
+                "en_core_web_sm",
+                disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"],
+            )
+            logger.info("spaCy model 'en_core_web_sm' loaded successfully.")
+        except OSError:
+            logger.warning(
+                "spaCy model 'en_core_web_sm' not found. "
+                "Run: python -m spacy download en_core_web_sm\n"
+                "Name extraction will use local heuristics and Gemini when configured."
+            )
+            app.state.nlp_model = None
 
     # Initialise in-memory resume store
     app.state.resumes = {}
@@ -119,6 +130,6 @@ async def health_check():
         "status": "ok",
         "service": "ResumeIQ API",
         "version": "1.0.0",
-        "spacy_loaded": app.state.nlp_model is not None,
-        "resumes_in_session": len(app.state.resumes),
+        "spacy_loaded": getattr(app.state, "nlp_model", None) is not None,
+        "resumes_in_session": len(getattr(app.state, "resumes", {})),
     }

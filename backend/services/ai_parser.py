@@ -4,17 +4,24 @@ Uses google-genai SDK with native structured JSON output (Pydantic schema enforc
 Handles resume parsing AND job description match scoring.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import os
 from typing import Optional
 
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
 from pathlib import Path
 
 from ..models.schemas import AIExtraction, AIMatchExtraction
+
+try:
+    from google import genai
+    from google.genai import types
+except ImportError:
+    genai = None
+    types = None
 
 # Load .env explicitly from the backend directory
 env_path = Path(__file__).parent.parent / '.env'
@@ -32,6 +39,11 @@ _client: Optional[genai.Client] = None
 def get_gemini_client() -> genai.Client:
     """Return a cached Gemini client, creating it on first call."""
     global _client
+    if genai is None:
+        raise EnvironmentError(
+            "google-genai is not installed or cannot be imported. "
+            "Install backend requirements to enable Gemini extraction."
+        )
     if _client is None:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:

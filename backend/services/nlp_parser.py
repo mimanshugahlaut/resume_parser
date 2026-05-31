@@ -5,14 +5,13 @@ The model is loaded once at app startup and passed in to avoid re-loading per re
 """
 
 import logging
-from typing import Optional
+from typing import Any, Optional
 
-import spacy
 
 logger = logging.getLogger(__name__)
 
 
-def extract_name(doc: spacy.tokens.Doc) -> Optional[str]:
+def extract_name(doc: Any) -> Optional[str]:
     """
     Extract the candidate's full name using spaCy's PERSON entity.
 
@@ -41,7 +40,7 @@ def extract_name(doc: spacy.tokens.Doc) -> Optional[str]:
     return None
 
 
-def extract_organizations(doc: spacy.tokens.Doc) -> list[str]:
+def extract_organizations(doc: Any) -> list[str]:
     """
     Extract all organisation names from the document.
     Useful for enriching experience data.
@@ -57,7 +56,7 @@ def extract_organizations(doc: spacy.tokens.Doc) -> list[str]:
     return orgs
 
 
-def extract_dates(doc: spacy.tokens.Doc) -> list[str]:
+def extract_dates(doc: Any) -> list[str]:
     """
     Extract all date expressions from the document.
     Useful for validating experience durations.

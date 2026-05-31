@@ -6,7 +6,10 @@ Reads paragraphs and tables to produce clean, structured text.
 import io
 import logging
 
-from docx import Document
+try:
+    from docx import Document
+except ImportError:
+    Document = None
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +27,11 @@ def extract_text_from_docx(file_bytes: bytes) -> str:
     Raises:
         ValueError: If the DOCX has no extractable text.
     """
+    if Document is None:
+        raise RuntimeError(
+            "python-docx is not installed. Install backend requirements to parse DOCX files."
+        )
+
     doc = Document(io.BytesIO(file_bytes))
     text_parts: list[str] = []
 
