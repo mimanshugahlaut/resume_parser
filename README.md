@@ -88,6 +88,20 @@ resume-parser/
 
 ---
 
+## GitHub
+
+- **Repository:** https://github.com/mimanshugahlaut/resume_parser
+- **Contributing:** Please open issues for bugs or feature requests. To contribute code:
+   1. Fork the repo and create a feature branch `feature/your-change`
+   2. Implement your changes and add tests where appropriate
+   3. Open a Pull Request targeting `main` and describe the change
+- **Code style:** Follow existing repository conventions (Python: PEP8, JS: project ESLint/Prettier if used).
+- **CI / Actions:** Add a GitHub Actions workflow under `.github/workflows/` to run tests (`backend/test_client.py`) and lint on push/PR.
+- **Releases:** Tag a release with `git tag -a vX.Y.Z -m "Release notes"` and `git push --tags`.
+- **Branching model:** Use `main` for production-ready code; open short-lived feature branches for development.
+
+---
+
 ## License
 
 MIT
