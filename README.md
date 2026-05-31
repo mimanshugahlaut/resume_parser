@@ -10,6 +10,8 @@ pinned: false
 
 A lightweight AI-assisted resume parsing web app (FastAPI backend + React/Vite frontend).
 
+**Live app:** https://mimanshugahlaut-resume-parser.hf.space/
+
 This project accepts PDF or DOCX resumes, extracts structured data (contact info, skills, education, experience), generates a short summary using Google Gemini, and provides a match-scoring endpoint to compare a parsed resume against a job description.
 
 Key elements implemented in this repository:
@@ -56,6 +58,8 @@ Frontend dev server defaults to `http://localhost:5173` and reads backend URL fr
 ## Deployment
 
 ### Hugging Face Spaces (recommended free option)
+
+Live deployment: https://mimanshugahlaut-resume-parser.hf.space/
 
 This repo includes a root-level `Dockerfile` for Hugging Face Spaces. It builds the React frontend, installs the FastAPI backend, and serves both from one container.
 
