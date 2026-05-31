@@ -6,152 +6,113 @@ colorTo: green
 sdk: docker
 pinned: false
 ---
-# ResumeIQ 📄
 
-[![Live on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://mimanshugahlaut-resume-parser.hf.space/)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<div align="center">
+  <h1>📄 ResumeIQ</h1>
+  <p><strong>A lightning-fast, AI-powered resume parsing engine.</strong></p>
 
-**ResumeIQ** is a lightweight AI-assisted resume parsing web app built with a FastAPI backend and a React/Vite frontend.
+  [![Live on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue?style=for-the-badge)](https://mimanshugahlaut-resume-parser.hf.space/)
+  [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg?style=for-the-badge)](https://www.python.org/downloads/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+</div>
 
-**🚀 Live App:** [https://mimanshugahlaut-resume-parser.hf.space/](https://mimanshugahlaut-resume-parser.hf.space/)
+<br />
 
-This project accepts PDF or DOCX resumes, extracts structured data (contact info, skills, education, experience), generates a short summary using Google Gemini, and provides a match-scoring endpoint to compare a parsed resume against a job description.
-
-Key elements implemented in this repository:
-- File upload and parsing pipeline (PDF/DOCX)
-- Regex extraction for email/phone/LinkedIn
-- Optional spaCy NER for entity extraction (`en_core_web_sm`)
-- Gemini Flash integration for structured extraction and match scoring
-- In-memory session storage for parsed resumes (MVP)
-- React + Vite frontend with Axios API client
+**ResumeIQ** effortlessly extracts structured data from PDF and DOCX resumes, scoring them against job descriptions using Google Gemini 2.5 Flash and NLP techniques. It features a blazing-fast FastAPI backend and a sleek React/Vite frontend.
 
 ---
 
-## Quick Start
+## ✨ Key Features
 
-Prerequisites:
+- **📂 Multi-Format Support:** Upload and parse both `.pdf` and `.docx` resumes instantly.
+- **🧠 AI-Powered Extraction:** Uses **Google Gemini 2.5 Flash** for deep contextual extraction and professional summary generation.
+- **🔍 Local NLP Fallback:** Employs **spaCy NER** (`en_core_web_sm`) and Regex for fast extraction of emails, phone numbers, and LinkedIn URLs without API dependency.
+- **📊 ATS JD Matching:** Compare a parsed resume against a Job Description to get an ATS Match Score and personalized improvement recommendations.
+- **⚡ Modern Tech Stack:** Built on **FastAPI** for high performance and **React + Vite** for a snappy, glassmorphic UI.
+
+---
+
+## 🛠️ Technology Stack
+
+| Frontend | Backend | AI / NLP |
+|----------|---------|----------|
+| React 18 | FastAPI | Google Gemini 2.5 Flash |
+| Vite | Python 3.11+ | spaCy (`en_core_web_sm`) |
+| Vanilla CSS | Uvicorn | Regex Pipelines |
+
+---
+
+## 🚀 Getting Started (Local Development)
+
+### Prerequisites
 - Python 3.11+
 - Node.js 18+
+- [Google Gemini API Key](https://aistudio.google.com/app/apikey)
 
-Backend (development):
-
+### 1️⃣ Backend Setup
+Navigate to the `backend` directory or root and start the API:
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r backend\requirements.txt
-python -m spacy download en_core_web_sm  # optional but recommended
-set GEMINI_API_KEY=your_key_here        # or add to backend/.env
+python -m spacy download en_core_web_sm  # Optional but highly recommended
+set GEMINI_API_KEY=your_gemini_api_key   # Or add it to backend/.env
 uvicorn backend.main:app --reload --port 8000
 ```
+*API Docs will be available at: [http://localhost:8000/docs](http://localhost:8000/docs)*
 
-Backend API will be available at `http://localhost:8000` (interactive docs at `/docs`).
-
-Frontend (development):
-
+### 2️⃣ Frontend Setup
+In a new terminal, navigate to the `frontend` directory:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+*Frontend runs at: [http://localhost:5173](http://localhost:5173)*
 
-Frontend dev server defaults to `http://localhost:5173` and reads backend URL from `VITE_API_URL`.
+*(Note: The frontend automatically connects to the backend at `http://localhost:8000` via the `VITE_API_URL` environment variable).*
 
 ---
 
-## Deployment
+## ☁️ Deployment
 
-### Hugging Face Spaces (recommended free option)
-
-Live deployment: https://mimanshugahlaut-resume-parser.hf.space/
-
-This repo includes a root-level `Dockerfile` for Hugging Face Spaces. It builds the React frontend, installs the FastAPI backend, and serves both from one container.
-
-Deploy steps:
-
-1. Create a new Hugging Face Space.
-2. Choose **Docker** as the Space SDK.
-3. Connect or upload this GitHub repo from the `main` branch.
-4. Add `GEMINI_API_KEY` as a Space secret.
-5. Wait for the Space build to finish.
-
-The app runs on Hugging Face's default container port `7860`. The frontend calls the backend on the same origin, so `VITE_API_URL` is not required for the Space deployment.
+### Hugging Face Spaces (Recommended)
+This repository is configured to deploy instantly on [Hugging Face Spaces](https://huggingface.co/spaces) using Docker. 
+1. Create a new Space and select **Docker**.
+2. Connect this GitHub repository.
+3. Add `GEMINI_API_KEY` to your Space Secrets.
+4. The space will automatically build and serve both the backend and static frontend from port `7860`.
 
 ### Render
-
-This repo includes a root-level `render.yaml` Blueprint for Render:
-
-- `resumeiq-backend` FastAPI web service
-- `resumeiq-frontend` Vite static site
-
-Deploy from Render with **New > Blueprint**, connect this GitHub repo, and select the `main` branch.
-
-Set `GEMINI_API_KEY` in the backend service environment. If Render assigns different service URLs, update:
-
-- Backend `FRONTEND_ORIGIN`
-- Frontend `VITE_API_URL`
-
-The frontend build expects `VITE_API_URL` to point to the deployed backend URL.
+A `render.yaml` blueprint is included for deploying the backend and frontend as separate services on [Render](https://render.com). 
+- Connect your repo, select **New > Blueprint**.
+- Ensure you set `GEMINI_API_KEY` in the backend environment.
 
 ---
 
-## Environment
+## 📖 API Endpoints
 
-- `GEMINI_API_KEY` — required for AI extraction and match scoring (set in environment or `backend/.env`).
-- `VITE_API_URL` — frontend environment variable to point to the backend (defaults to `http://localhost:8000`).
-
----
-
-## API (summary)
-
-- POST `/parse` — multipart upload (`file`): returns parsed resume JSON (see `backend/models/schemas.py`).
-- POST `/match` — JSON body `{ resume_id, job_description }`: returns match score and recommendations.
-- GET `/resumes` — list parsed resumes in current server session.
-- GET `/resumes/{id}` — retrieve a parsed resume by id.
-
-See FastAPI docs at `http://localhost:8000/docs` for full request/response schemas.
+- `POST /parse`: Upload a multipart `file` (PDF/DOCX) to extract all structured data.
+- `POST /match`: Provide a `{ resume_id, job_description }` JSON body to receive an ATS match score.
+- `GET /resumes`: List all parsed resumes in the current temporary session.
+- `GET /resumes/{id}`: Retrieve a specific parsed resume.
 
 ---
 
-## Project layout
-
-```
-resume-parser/
-├─ backend/
-│  ├─ main.py          # FastAPI app and startup logic
-│  ├─ requirements.txt
-│  ├─ models/schemas.py # Pydantic models for API
-│  ├─ routers/          # /parse, /match, /resumes
-│  └─ services/         # extractor, pdf/docx readers, regex, ai_parser
-└─ frontend/
-   └─ src/             # React app, components, hooks, api client
-```
+## ⚠️ Limitations & Notes
+- **In-Memory Storage:** Parsed data is stored in memory and will be wiped upon server restart. Not suitable for production databases without modification.
+- **Image PDFs:** Scanned, image-only PDFs are not currently supported (requires OCR preprocessing).
+- **API Limits:** Gemini usage is subject to Google's rate limits and pricing tiers.
 
 ---
 
-## Notes & limitations
+## 🤝 Contributing
+Contributions are welcome! 
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-- Parsed resumes are stored only in memory and will be lost on restart.
-- Scanned/image-only PDFs are not OCR'd (use OCR pre-processing for those files).
-- Gemini API usage requires a valid API key and may incur costs or rate limits.
-
----
-
-## GitHub
-
-- **Repository:** https://github.com/mimanshugahlaut/resume_parser
-- **Contributing:** Please open issues for bugs or feature requests. To contribute code:
-   1. Fork the repo and create a feature branch `feature/your-change`
-   2. Implement your changes and add tests where appropriate
-   3. Open a Pull Request targeting `main` and describe the change
-- **Code style:** Follow existing repository conventions (Python: PEP8, JS: project ESLint/Prettier if used).
-- **CI / Actions:** Add a GitHub Actions workflow under `.github/workflows/` to run tests (`backend/test_client.py`) and lint on push/PR.
-- **Releases:** Tag a release with `git tag -a vX.Y.Z -m "Release notes"` and `git push --tags`.
-- **Branching model:** Use `main` for production-ready code; open short-lived feature branches for development.
-
----
-
-## License
-
-MIT
-
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
