@@ -206,7 +206,3 @@ resume-parser/
 - **Render cold starts** — Free tier has ~30-50s startup delay
 
 ---
-
-## 📄 License
-
-MIT License — built by **Mimanshu Sharma** as part of the ResumeIQ project.
