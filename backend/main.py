@@ -9,6 +9,7 @@ Run with:
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -100,12 +101,16 @@ origins = [
     "http://localhost:5173",       # Vite dev server
     "http://127.0.0.1:5173",
     "http://localhost:3000",       # Alternative dev port
-    "https://*.vercel.app",        # Vercel production deployments
 ]
+
+configured_frontend_origin = os.getenv("FRONTEND_ORIGIN")
+if configured_frontend_origin:
+    origins.append(configured_frontend_origin.rstrip("/"))
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.(vercel\.app|onrender\.com)",
     allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],

@@ -45,6 +45,24 @@ Frontend dev server defaults to `http://localhost:5173` and reads backend URL fr
 
 ---
 
+## Deployment
+
+This repo includes a root-level `render.yaml` Blueprint for Render:
+
+- `resumeiq-backend` FastAPI web service
+- `resumeiq-frontend` Vite static site
+
+Deploy from Render with **New > Blueprint**, connect this GitHub repo, and select the `main` branch.
+
+Set `GEMINI_API_KEY` in the backend service environment. If Render assigns different service URLs, update:
+
+- Backend `FRONTEND_ORIGIN`
+- Frontend `VITE_API_URL`
+
+The frontend build expects `VITE_API_URL` to point to the deployed backend URL.
+
+---
+
 ## Environment
 
 - `GEMINI_API_KEY` — required for AI extraction and match scoring (set in environment or `backend/.env`).
