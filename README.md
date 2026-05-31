@@ -6,11 +6,15 @@ colorTo: green
 sdk: docker
 pinned: false
 ---
-# Resume Parser
+# ResumeIQ 📄
 
-A lightweight AI-assisted resume parsing web app (FastAPI backend + React/Vite frontend).
+[![Live on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://mimanshugahlaut-resume-parser.hf.space/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Live app:** https://mimanshugahlaut-resume-parser.hf.space/
+**ResumeIQ** is a lightweight AI-assisted resume parsing web app built with a FastAPI backend and a React/Vite frontend.
+
+**🚀 Live App:** [https://mimanshugahlaut-resume-parser.hf.space/](https://mimanshugahlaut-resume-parser.hf.space/)
 
 This project accepts PDF or DOCX resumes, extracts structured data (contact info, skills, education, experience), generates a short summary using Google Gemini, and provides a match-scoring endpoint to compare a parsed resume against a job description.
 
