@@ -115,7 +115,7 @@ export default function Navbar() {
 
           {/* GitHub link */}
           <a
-            href="https://github.com"
+            href="https://github.com/mimanshugahlaut/resume_parser"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
