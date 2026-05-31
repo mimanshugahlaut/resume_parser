@@ -138,7 +138,7 @@ function ContactItem({ icon, label, value, href, external, id }) {
 }
 
 export default function BioSection({ data }) {
-  const { name, email, phone, linkedin, summary } = data
+  const { name, email, phone, linkedin, github, summary } = data
   const initials = getInitials(name)
 
   return (
@@ -223,6 +223,16 @@ export default function BioSection({ data }) {
             href={linkedin}
             external
             id="linkedin-link"
+          />
+        )}
+        {github && (
+          <ContactItem
+            icon="🐱"
+            label="GitHub"
+            value={github.replace(/^https?:\/\/(www\.)?github\.com\//, '')}
+            href={github.startsWith('http') ? github : `https://${github}`}
+            external
+            id="github-link"
           />
         )}
       </div>

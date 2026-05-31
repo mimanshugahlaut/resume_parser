@@ -12,10 +12,13 @@ from typing import Optional
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from pathlib import Path
 
 from ..models.schemas import AIExtraction, AIMatchExtraction
 
-load_dotenv()
+# Load .env explicitly from the backend directory
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 logger = logging.getLogger(__name__)
 

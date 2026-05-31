@@ -20,6 +20,7 @@ export default function ExportButton({ data }) {
       ['Email', data.email || ''],
       ['Phone', data.phone || ''],
       ['LinkedIn', data.linkedin || ''],
+      ['GitHub', data.github || ''],
       ['Summary', data.summary || ''],
       ['Skills', (data.skills || []).join('; ')],
       ...((data.education || []).map((e, i) => [
