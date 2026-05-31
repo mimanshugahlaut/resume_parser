@@ -11,9 +11,12 @@ Run with:
 import logging
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 try:
     import spacy
@@ -101,6 +104,7 @@ origins = [
     "http://localhost:5173",       # Vite dev server
     "http://127.0.0.1:5173",
     "http://localhost:3000",       # Alternative dev port
+    "https://huggingface.co",
 ]
 
 configured_frontend_origin = os.getenv("FRONTEND_ORIGIN")
@@ -110,7 +114,7 @@ if configured_frontend_origin:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=r"https://.*\.(vercel\.app|onrender\.com)",
+    allow_origin_regex=r"https://.*\.(vercel\.app|onrender\.com|hf\.space)",
     allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -128,7 +132,7 @@ app.include_router(resumes.router)
 # Health check
 # ---------------------------------------------------------------------------
 
-@app.get("/", tags=["Health"], summary="Health check")
+@app.get("/health", tags=["Health"], summary="Health check")
 async def health_check():
     """Returns API status and spaCy model availability."""
     return {
@@ -138,3 +142,26 @@ async def health_check():
         "spacy_loaded": getattr(app.state, "nlp_model", None) is not None,
         "resumes_in_session": len(getattr(app.state, "resumes", {})),
     }
+
+
+# ---------------------------------------------------------------------------
+# Static frontend for single-container deployments
+# ---------------------------------------------------------------------------
+
+frontend_dist = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
+if frontend_dist.exists():
+    assets_dir = frontend_dist / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/", include_in_schema=False)
+    async def serve_frontend_index():
+        return FileResponse(frontend_dist / "index.html")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    async def serve_frontend_route(path: str):
+        candidate = frontend_dist / path
+        if candidate.is_file():
+            return FileResponse(candidate)
+        return FileResponse(frontend_dist / "index.html")

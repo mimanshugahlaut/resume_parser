@@ -47,6 +47,22 @@ Frontend dev server defaults to `http://localhost:5173` and reads backend URL fr
 
 ## Deployment
 
+### Hugging Face Spaces (recommended free option)
+
+This repo includes a root-level `Dockerfile` for Hugging Face Spaces. It builds the React frontend, installs the FastAPI backend, and serves both from one container.
+
+Deploy steps:
+
+1. Create a new Hugging Face Space.
+2. Choose **Docker** as the Space SDK.
+3. Connect or upload this GitHub repo from the `main` branch.
+4. Add `GEMINI_API_KEY` as a Space secret.
+5. Wait for the Space build to finish.
+
+The app runs on Hugging Face's default container port `7860`. The frontend calls the backend on the same origin, so `VITE_API_URL` is not required for the Space deployment.
+
+### Render
+
 This repo includes a root-level `render.yaml` Blueprint for Render:
 
 - `resumeiq-backend` FastAPI web service
