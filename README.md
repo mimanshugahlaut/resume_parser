@@ -1,3 +1,11 @@
+---
+title: Resume Parser
+emoji: 📄
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
 # Resume Parser
 
 A lightweight AI-assisted resume parsing web app (FastAPI backend + React/Vite frontend).
